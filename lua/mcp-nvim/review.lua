@@ -230,6 +230,7 @@ function M.show_diff(bufnr, start_line, old_lines, new_lines, on_decision)
         for ni, line in ipairs(hunk.new_lines) do
           local old_counterpart = hunk.old_lines[ni]
           local chunks = intra_line_chunks(line, old_counterpart, "McpReviewAdd", "McpReviewAddEmph")
+          table.insert(chunks, 1, { "+ ", "McpReviewAddEmph" })
           table.insert(virt, chunks)
         end
         local anchor = start_line + hunk.old_start + #hunk.old_lines - 3
