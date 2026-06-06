@@ -247,7 +247,10 @@ function M.show_diff(bufnr, start_line, old_lines, new_lines, on_decision)
           end
           local suffix_start_buf = #buf_line + 1
           for ci = 0, min_len - prefix_end - 1 do
-            if buf_line:sub(#buf_line - ci, #buf_line - ci) == new_counterpart:sub(#new_counterpart - ci, #new_counterpart - ci) then
+            if
+              buf_line:sub(#buf_line - ci, #buf_line - ci)
+              == new_counterpart:sub(#new_counterpart - ci, #new_counterpart - ci)
+            then
               suffix_start_buf = #buf_line - ci
             else
               break
