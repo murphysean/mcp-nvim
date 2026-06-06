@@ -142,6 +142,38 @@ Or add to `.claude/settings.json`:
 }
 ```
 
+<<<<<<< HEAD
+=======
+**Verify it's connected:**
+
+```bash
+claude mcp list
+```
+
+You should see `neovim` with status "connected" and all 43 tools listed.
+
+### Kiro CLI
+
+Add to your Kiro MCP configuration (`~/.kiro/settings.json` or project-level):
+
+```json
+{
+  "mcpServers": {
+    "neovim": {
+      "type": "url",
+      "url": "http://127.0.0.1:3000/mcp"
+    }
+  }
+}
+```
+
+Or use the CLI:
+
+```bash
+kiro mcp add neovim --url http://127.0.0.1:3000/mcp
+```
+
+>>>>>>> dc33a48 (Improve edit review UI and ensure tools target correct window/tab)
 ### Goose
 
 Add to `~/.config/goose/config.yaml`:
@@ -222,6 +254,12 @@ Agent workflow templates exposed via `prompts/list`. These provide rich, context
 - `search_files` — Search text across workspace (uses ripgrep)
 - `run` — Execute a shell command
 - `diagnostics` — Get LSP diagnostics for workspace or a file
+<<<<<<< HEAD
+=======
+
+### Editing
+- `buffer_edit` — Find-and-replace within a buffer (in-memory)
+>>>>>>> dc33a48 (Improve edit review UI and ensure tools target correct window/tab)
 
 ### Navigation
 - `cursor_get` / `cursor_set` — Read/move cursor
@@ -329,7 +367,11 @@ The plugin uses Neovim's built-in libuv bindings (`vim.loop`) to run an HTTP ser
 ## Security
 
 - The server only listens on localhost by default
+<<<<<<< HEAD
 - CORS is restricted to localhost origins
+=======
+- CORS is restricted to localhost origins (no arbitrary web page access)
+>>>>>>> dc33a48 (Improve edit review UI and ensure tools target correct window/tab)
 - `lua_exec`, `nvim_exec`, `nvim_eval`, and `run` execute arbitrary code — disable with `allow_code_execution = false`
 - No authentication (any local process can connect) — suitable for single-user development machines
 - Sampling requests only go to already-connected clients (never to external services)
@@ -337,4 +379,7 @@ The plugin uses Neovim's built-in libuv bindings (`vim.loop`) to run an HTTP ser
 ## License
 
 MIT
+<<<<<<< HEAD
 
+=======
+>>>>>>> dc33a48 (Improve edit review UI and ensure tools target correct window/tab)
