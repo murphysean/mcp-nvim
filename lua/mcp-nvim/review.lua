@@ -4,13 +4,38 @@ local ns = vim.api.nvim_create_namespace("mcp_review")
 
 local pending_review = nil
 
-vim.api.nvim_set_hl(0, "McpReviewAdd", { bg = "#1a3a1a", fg = "#a3be8c", default = true })
-vim.api.nvim_set_hl(0, "McpReviewAddEmph", { bg = "#2e5c2e", fg = "#b5cea8", bold = true, default = true })
-vim.api.nvim_set_hl(0, "McpReviewDel", { bg = "#3a1a1a", default = true })
-vim.api.nvim_set_hl(0, "McpReviewDelEmph", { bg = "#5a2d2d", fg = "#e8a3a3", bold = true, default = true })
-vim.api.nvim_set_hl(0, "McpReviewDelText", { fg = "#cc6666", default = true })
-vim.api.nvim_set_hl(0, "McpReviewInfo", { fg = "#888888", italic = true, default = true })
-vim.api.nvim_set_hl(0, "McpReviewContext", { fg = "#666666", default = true })
+local function setup_highlights()
+  local ok, base46_colors = pcall(require, "base46.colors")
+  local palette_ok, palette = pcall(function()
+    return require("base46").get_theme_tb("base_30")
+  end)
+
+  if ok and palette_ok and palette then
+    local darken = base46_colors.change_hex_lightness
+    local green = palette.green or "#a3be8c"
+    local red = palette.red or "#cc6666"
+    local grey = palette.grey or "#888888"
+    local bg = palette.black or "#1e1e1e"
+
+    vim.api.nvim_set_hl(0, "McpReviewAdd", { bg = darken(green, -60), fg = green })
+    vim.api.nvim_set_hl(0, "McpReviewAddEmph", { bg = darken(green, -40), fg = darken(green, 20), bold = true })
+    vim.api.nvim_set_hl(0, "McpReviewDel", { bg = darken(red, -60) })
+    vim.api.nvim_set_hl(0, "McpReviewDelEmph", { bg = darken(red, -40), fg = darken(red, 20), bold = true })
+    vim.api.nvim_set_hl(0, "McpReviewDelText", { fg = red })
+    vim.api.nvim_set_hl(0, "McpReviewInfo", { fg = grey, italic = true })
+    vim.api.nvim_set_hl(0, "McpReviewContext", { fg = darken(grey, -20) })
+  else
+    vim.api.nvim_set_hl(0, "McpReviewAdd", { bg = "#1a3a1a", fg = "#a3be8c", default = true })
+    vim.api.nvim_set_hl(0, "McpReviewAddEmph", { bg = "#2e5c2e", fg = "#b5cea8", bold = true, default = true })
+    vim.api.nvim_set_hl(0, "McpReviewDel", { bg = "#3a1a1a", default = true })
+    vim.api.nvim_set_hl(0, "McpReviewDelEmph", { bg = "#5a2d2d", fg = "#e8a3a3", bold = true, default = true })
+    vim.api.nvim_set_hl(0, "McpReviewDelText", { fg = "#cc6666", default = true })
+    vim.api.nvim_set_hl(0, "McpReviewInfo", { fg = "#888888", italic = true, default = true })
+    vim.api.nvim_set_hl(0, "McpReviewContext", { fg = "#666666", default = true })
+  end
+end
+
+setup_highlights()
 
 local function intra_line_chunks(line, old_line, hl_base, hl_emph)
   if not old_line then
