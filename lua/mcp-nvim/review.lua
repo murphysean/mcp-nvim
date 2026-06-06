@@ -80,6 +80,42 @@ local function intra_line_chunks(line, old_line, hl_base, hl_emph)
   return chunks
 end
 
+local function wrap_chunks(chunks, width)
+  if width <= 0 then
+    return { chunks }
+  end
+  local rows = {}
+  local cur_row = {}
+  local col = 0
+  for _, chunk in ipairs(chunks) do
+    local text, hl = chunk[1], chunk[2]
+    while #text > 0 do
+      local remaining = width - col
+      if remaining <= 0 then
+        table.insert(rows, cur_row)
+        cur_row = {}
+        col = 0
+        remaining = width
+      end
+      if #text <= remaining then
+        table.insert(cur_row, { text, hl })
+        col = col + #text
+        text = ""
+      else
+        table.insert(cur_row, { text:sub(1, remaining), hl })
+        text = text:sub(remaining + 1)
+        table.insert(rows, cur_row)
+        cur_row = {}
+        col = 0
+      end
+    end
+  end
+  if #cur_row > 0 then
+    table.insert(rows, cur_row)
+  end
+  return rows
+end
+
 local function lcs(a, b)
   local m, n = #a, #b
   local dp = {}
@@ -229,10 +265,21 @@ function M.show_diff(bufnr, start_line, old_lines, new_lines, on_decision)
 
       if #hunk.new_lines > 0 then
         local virt = {}
+        local do_wrap = vim.wo.wrap
+        local win_width = do_wrap
+            and (vim.api.nvim_win_get_width(0) - vim.fn.getwininfo(vim.api.nvim_get_current_win())[1].textoff)
+          or 0
         for ni, line in ipairs(hunk.new_lines) do
           local old_counterpart = hunk.old_lines[ni]
           local chunks = intra_line_chunks(line, old_counterpart, "McpReviewAdd", "McpReviewAddEmph")
-          table.insert(virt, chunks)
+          if do_wrap then
+            local wrapped = wrap_chunks(chunks, win_width)
+            for _, row in ipairs(wrapped) do
+              table.insert(virt, row)
+            end
+          else
+            table.insert(virt, chunks)
+          end
         end
         local anchor = start_line + hunk.old_start + #hunk.old_lines - 3
         if #hunk.old_lines == 0 then
