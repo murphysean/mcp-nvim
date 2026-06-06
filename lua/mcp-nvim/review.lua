@@ -263,6 +263,8 @@ function M.show_diff(bufnr, start_line, old_lines, new_lines, on_decision)
     on_decision = on_decision,
   }
 
+  vim.notify("MCP: edit pending review — [a]ccept [A]lways [r]eject [R]eason [e]dit", vim.log.levels.INFO)
+
   local function cleanup()
     if not pending_review then
       return
@@ -274,6 +276,7 @@ function M.show_diff(bufnr, start_line, old_lines, new_lines, on_decision)
     pcall(vim.keymap.del, "n", "R", { buffer = bufnr })
     pcall(vim.keymap.del, "n", "e", { buffer = bufnr })
     pending_review = nil
+    vim.cmd("echo ''")
   end
 
   vim.keymap.set("n", "a", function()
