@@ -33,6 +33,12 @@ function M.handle_jsonrpc(request_body, tool_registry, session_id, respond_fn)
   local id = msg.id
   local params = msg.params or {}
 
+  -- Extract Goose session ID from _meta on all incoming requests.
+  -- Goose injects `agent-session-id` into request _meta for session-aware routing.
+  if params._meta and params._meta["agent-session-id"] and session_id then
+    sessions.set_client_session_id(session_id, params._meta["agent-session-id"])
+  end
+
   -- Handle responses to server-initiated requests (sampling, etc.)
   if not method and id and (msg.result or msg.error) then
     local sampling = require("mcp-nvim.mcp.sampling")

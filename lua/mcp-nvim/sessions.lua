@@ -17,6 +17,7 @@ function M.create(connection)
     id = id,
     connection = connection,
     subscriptions = {}, -- uri -> true
+    client_session_id = nil, -- Goose's agent-session-id
   }
 
   sessions[id] = session
@@ -25,6 +26,23 @@ end
 
 function M.get(id)
   return sessions[id]
+end
+
+--- Set the Goose agent-session-id for an MCP session (extracted from _meta).
+function M.set_client_session_id(id, client_session_id)
+  local session = sessions[id]
+  if session then
+    session.client_session_id = client_session_id
+  end
+end
+
+--- Get the Goose agent-session-id for an MCP session.
+function M.get_client_session_id(id)
+  local session = sessions[id]
+  if session then
+    return session.client_session_id
+  end
+  return nil
 end
 
 function M.remove(id)
