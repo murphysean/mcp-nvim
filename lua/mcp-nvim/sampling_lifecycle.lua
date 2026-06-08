@@ -23,7 +23,9 @@ end
 --- Register all sampling-dependent keymaps and features.
 --- Safe to call multiple times — only registers once.
 function M.activate()
-  if registered then return end
+  if registered then
+    return
+  end
   registered = true
 
   -- Autocomplete keymaps
@@ -58,7 +60,9 @@ end
 
 --- Deregister all sampling-dependent keymaps and features.
 function M.deactivate()
-  if not registered then return end
+  if not registered then
+    return
+  end
   registered = false
 
   -- Remove keymaps (silently ignore if already gone)
@@ -101,4 +105,3 @@ function M.is_active()
 end
 
 return M
-

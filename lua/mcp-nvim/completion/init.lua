@@ -27,10 +27,14 @@ end
 
 --- Register blink.cmp source (if blink is available).
 local function register_blink()
-  if blink_registered then return true end
+  if blink_registered then
+    return true
+  end
 
   local blink_ok, blink = pcall(require, "blink.cmp")
-  if not blink_ok or not blink.add_source_provider then return false end
+  if not blink_ok or not blink.add_source_provider then
+    return false
+  end
 
   local ok, err = pcall(blink.add_source_provider, "mcp", {
     name = "MCP",
@@ -65,8 +69,12 @@ end
 --- Claim omnifunc/completefunc on a buffer if unclaimed.
 local function claim_buffer_funcs(buf)
   buf = buf or vim.api.nvim_get_current_buf()
-  if not vim.api.nvim_buf_is_valid(buf) then return end
-  if vim.api.nvim_get_option_value("buftype", { buf = buf }) ~= "" then return end
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
+  if vim.api.nvim_get_option_value("buftype", { buf = buf }) ~= "" then
+    return
+  end
 
   local our_func = "v:lua.require'mcp-nvim.completion.completefunc'.completefunc"
 
@@ -84,7 +92,9 @@ end
 --- Release our claims on a buffer.
 local function release_buffer_funcs(buf)
   buf = buf or vim.api.nvim_get_current_buf()
-  if not vim.api.nvim_buf_is_valid(buf) then return end
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
 
   local our_func = "v:lua.require'mcp-nvim.completion.completefunc'.completefunc"
 
@@ -101,7 +111,9 @@ end
 
 --- Set up autocmds for dynamic claim/release.
 local function register_native()
-  if native_registered then return true end
+  if native_registered then
+    return true
+  end
 
   augroup = vim.api.nvim_create_augroup("mcp_nvim_completion", { clear = true })
 
@@ -141,7 +153,9 @@ end
 
 --- Re-claim all buffers (called when a client connects).
 function M.on_client_connected()
-  if not native_registered then return end
+  if not native_registered then
+    return
+  end
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) then
       claim_buffer_funcs(buf)
@@ -151,7 +165,9 @@ end
 
 --- Release all buffers (called when all clients disconnect).
 function M.on_client_disconnected()
-  if not native_registered then return end
+  if not native_registered then
+    return
+  end
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) then
       release_buffer_funcs(buf)
@@ -159,9 +175,14 @@ function M.on_client_disconnected()
   end
 end
 
-function M.is_registered() return blink_registered or native_registered end
-function M.is_blink_registered() return blink_registered end
-function M.is_native_registered() return native_registered end
+function M.is_registered()
+  return blink_registered or native_registered
+end
+function M.is_blink_registered()
+  return blink_registered
+end
+function M.is_native_registered()
+  return native_registered
+end
 
 return M
-

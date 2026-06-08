@@ -91,8 +91,10 @@ prompts.register("diagnostic-repair", {
       table.insert(diag_parts, string.format("\n  %s:", d.file))
     end
     local code_str = d.code ~= "" and string.format(" [%s]", d.code) or ""
-    table.insert(diag_parts, string.format("    L%d:%d [%s] %s%s (%s)",
-      d.line, d.col, d.severity, d.message, code_str, d.source))
+    table.insert(
+      diag_parts,
+      string.format("    L%d:%d [%s] %s%s (%s)", d.line, d.col, d.severity, d.message, code_str, d.source)
+    )
   end
 
   -- Get imports/requires from current file (to understand dependency chain)
@@ -143,4 +145,3 @@ prompts.register("diagnostic-repair", {
     },
   }
 end)
-

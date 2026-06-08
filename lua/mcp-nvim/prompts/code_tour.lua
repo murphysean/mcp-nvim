@@ -129,4 +129,3 @@ prompts.register("code-tour", {
     },
   }
 end)
-

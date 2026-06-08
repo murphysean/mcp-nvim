@@ -82,7 +82,9 @@ prompts.register("pair-program", {
 
   -- Git status (what's been changed)
   local git_status = vim.fn.system("git status --porcelain 2>/dev/null")
-  if vim.v.shell_error ~= 0 then git_status = "" end
+  if vim.v.shell_error ~= 0 then
+    git_status = ""
+  end
   local changed_files = {}
   for line in git_status:gmatch("[^\n]+") do
     table.insert(changed_files, "  " .. line)
@@ -155,4 +157,3 @@ prompts.register("pair-program", {
     },
   }
 end)
-

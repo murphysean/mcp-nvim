@@ -112,4 +112,3 @@ prompts.register("navigate", {
     },
   }
 end)
-

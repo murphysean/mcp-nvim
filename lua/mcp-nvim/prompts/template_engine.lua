@@ -38,13 +38,15 @@ end
 --- Substitute all {placeholder} tokens in a template with values from a context table.
 --- Unresolved placeholders are replaced with empty string.
 function M.render(template, context)
-  return (template:gsub("{([%w_]+)}", function(key)
-    local value = context[key]
-    if value == nil or value == "" then
-      return ""
-    end
-    return value
-  end))
+  return (
+    template:gsub("{([%w_]+)}", function(key)
+      local value = context[key]
+      if value == nil or value == "" then
+        return ""
+      end
+      return value
+    end)
+  )
 end
 
 --- Convenience: read a template and render it with the given context.
@@ -57,4 +59,3 @@ function M.load_and_render(name, context)
 end
 
 return M
-

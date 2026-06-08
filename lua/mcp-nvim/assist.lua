@@ -69,7 +69,13 @@ local function fire_sampling(template_name, ctx_overrides, callback)
 
   sampling.create_message({
     messages = {
-      { role = "user", content = { type = "text", text = "Perform the task described in your instructions. Return only the requested output." } },
+      {
+        role = "user",
+        content = {
+          type = "text",
+          text = "Perform the task described in your instructions. Return only the requested output.",
+        },
+      },
     },
     systemPrompt = system,
     maxTokens = 1024,
@@ -318,4 +324,3 @@ function M.review()
 end
 
 return M
-

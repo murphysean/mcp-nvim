@@ -145,7 +145,8 @@ prompts.register("context-switch", {
     #marks > 0 and table.concat(marks, "\n") or "  (none set)",
     "",
     "### Recent Navigation (jumplist)",
-    #jump_entries > 0 and table.concat(vim.list_slice(jump_entries, 1, math.min(15, #jump_entries)), "\n") or "  (empty)",
+    #jump_entries > 0 and table.concat(vim.list_slice(jump_entries, 1, math.min(15, #jump_entries)), "\n")
+      or "  (empty)",
     "",
     "### Quickfix List",
     #qf_entries > 0 and table.concat(qf_entries, "\n") or "  (empty)",
@@ -164,4 +165,3 @@ prompts.register("context-switch", {
     },
   }
 end)
-

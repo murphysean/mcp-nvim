@@ -121,7 +121,13 @@ function M.fire(trigger_word)
 
   sampling.create_message({
     messages = {
-      { role = "user", content = { type = "text", text = "Complete the code at the cursor position. Return only the text to insert inline." } },
+      {
+        role = "user",
+        content = {
+          type = "text",
+          text = "Complete the code at the cursor position. Return only the text to insert inline.",
+        },
+      },
     },
     systemPrompt = system,
     maxTokens = 256,
@@ -166,4 +172,3 @@ function M.fire(trigger_word)
 end
 
 return M
-

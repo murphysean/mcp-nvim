@@ -238,4 +238,3 @@ function source:execute(context, item, callback, default_implementation)
 end
 
 return source
-

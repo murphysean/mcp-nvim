@@ -75,7 +75,10 @@ prompts.register("neovim-prefer", {
     string.format("- Working directory: `%s`", cwd),
     string.format("- Current filetype: `%s`", ft),
     string.format("- Installed plugins: %d", #plugins),
-    #plugins > 0 and string.format("- Notable plugins: %s", table.concat(vim.list_slice(plugins, 1, math.min(15, #plugins)), ", ")) or "",
+    #plugins > 0 and string.format(
+      "- Notable plugins: %s",
+      table.concat(vim.list_slice(plugins, 1, math.min(15, #plugins)), ", ")
+    ) or "",
     "",
     "## Best Practices",
     "- Read before editing — always check current buffer state first",
@@ -93,4 +96,3 @@ prompts.register("neovim-prefer", {
     },
   }
 end)
-

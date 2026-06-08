@@ -216,4 +216,3 @@ function M.complete(hint, visual)
 end
 
 return M
-
