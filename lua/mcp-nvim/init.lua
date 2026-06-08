@@ -70,24 +70,19 @@ function M.setup(opts)
     require("mcp-nvim.autocomplete").complete(hint, visual)
   end, { desc = "AI-powered code completion at cursor via sampling", nargs = "?", range = true })
 
-  vim.keymap.set("n", "<leader>ac", function()
-    require("mcp-nvim.autocomplete").complete()
-  end, { desc = "AI code completion" })
-  vim.keymap.set("v", "<leader>ac", function()
-    vim.cmd("'<,'>McpAutoComplete")
-  end, { desc = "AI code completion (replace selection)" })
-
   if M.config.auto_start then
     vim.defer_fn(function()
       M.start()
     end, 100)
   end
 
-  -- Dynamically register with blink.cmp if available (no user config needed)
+  -- Sampling-dependent features (keymaps, completion) are managed by the lifecycle module.
+  -- They register when a capable client connects, deregister when it disconnects.
+  -- We kick a check after a short delay to handle clients that connect immediately.
   vim.defer_fn(function()
-    local completion = require("mcp-nvim.completion")
-    completion.register()
-  end, 200)
+    local lifecycle = require("mcp-nvim.sampling_lifecycle")
+    lifecycle.on_session_ready()
+  end, 500)
 end
 
 function M.start()

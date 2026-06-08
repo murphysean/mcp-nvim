@@ -56,6 +56,13 @@ function M.handle_jsonrpc(request_body, tool_registry, session_id, respond_fn)
     if params.capabilities then
       M.client_capabilities = params.capabilities
     end
+
+    -- Notify lifecycle that a capable client may have connected
+    vim.schedule(function()
+      local lifecycle = require("mcp-nvim.sampling_lifecycle")
+      lifecycle.on_session_ready()
+    end)
+
     return M.success_response(id, {
       protocolVersion = M.PROTOCOL_VERSION,
       capabilities = M.CAPABILITIES,

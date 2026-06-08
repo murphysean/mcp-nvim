@@ -61,6 +61,12 @@ end
 
 function M.remove(id)
   sessions[id] = nil
+
+  -- Notify lifecycle that a session was lost
+  vim.schedule(function()
+    local lifecycle = require("mcp-nvim.sampling_lifecycle")
+    lifecycle.on_session_lost()
+  end)
 end
 
 --- Subscribe a session to a resource URI.
