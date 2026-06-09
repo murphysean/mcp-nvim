@@ -189,19 +189,6 @@ goose configure
 # Select "Add Extension" → "Streamable HTTP" → url: http://127.0.0.1:3000/mcp
 ```
 
-### Kiro CLI
-
-```json
-{
-  "mcpServers": {
-    "neovim": {
-      "type": "url",
-      "url": "http://127.0.0.1:3000/mcp"
-    }
-  }
-}
-```
-
 ### Any MCP Client
 
 - **Endpoint:** `http://127.0.0.1:3000/mcp`
@@ -251,9 +238,6 @@ Agent workflow templates exposed via `prompts/list`. These provide rich, context
 - `search_files` — Search text across workspace (uses ripgrep)
 - `run` — Execute a shell command
 - `diagnostics` — Get LSP diagnostics for workspace or a file
-
-### Editing
-- `buffer_edit` — Find-and-replace within a buffer (in-memory)
 
 ### Navigation
 - `cursor_get` / `cursor_set` — Read/move cursor
