@@ -90,7 +90,12 @@ local function is_connected(session)
   return session.connection ~= nil and session.connection:is_alive()
 end
 
---- Notify all sessions subscribed to a URI that the resource has changed.
+--- Check if a session is subscribed to a URI.
+local function is_subscribed(session, uri)
+  return session.subscriptions[uri] == true
+end
+
+--- Notify sessions subscribed to a URI that the resource has changed.
 function M.notify_resource_updated(uri)
   local notification = json.encode({
     jsonrpc = "2.0",
@@ -100,12 +105,12 @@ function M.notify_resource_updated(uri)
 
   local dead = {}
   for id, session in pairs(sessions) do
-    if session.subscriptions[uri] then
-      if is_connected(session) then
-        session.connection:send_sse_event("message", notification)
-      elseif session.connection then
+    if not is_connected(session) then
+      if session.connection then
         table.insert(dead, id)
       end
+    elseif is_subscribed(session, uri) then
+      session.connection:send_sse_event("message", notification)
     end
   end
 

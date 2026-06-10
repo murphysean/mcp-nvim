@@ -142,6 +142,35 @@ Or add to `.claude/settings.json`:
 }
 ```
 
+**Verify it's connected:**
+
+```bash
+claude mcp list
+```
+
+You should see `neovim` with status "connected" and all 43 tools listed.
+
+### Kiro CLI
+
+Add to your Kiro MCP configuration (`~/.kiro/settings.json` or project-level):
+
+```json
+{
+  "mcpServers": {
+    "neovim": {
+      "type": "url",
+      "url": "http://127.0.0.1:3000/mcp"
+    }
+  }
+}
+```
+
+Or use the CLI:
+
+```bash
+kiro mcp add neovim --url http://127.0.0.1:3000/mcp
+```
+
 ### Goose
 
 Add to `~/.config/goose/config.yaml`:
@@ -160,19 +189,6 @@ goose configure
 # Select "Add Extension" → "Streamable HTTP" → url: http://127.0.0.1:3000/mcp
 ```
 
-### Kiro CLI
-
-```json
-{
-  "mcpServers": {
-    "neovim": {
-      "type": "url",
-      "url": "http://127.0.0.1:3000/mcp"
-    }
-  }
-}
-```
-
 ### Any MCP Client
 
 - **Endpoint:** `http://127.0.0.1:3000/mcp`
@@ -185,10 +201,11 @@ goose configure
 | Capability   | Status | Notes |
 |-------------|--------|-------|
 | Tools        | 43 tools | Full editor control |
-| Resources    | 17 static + 3 templates | Live editor state with subscriptions |
-| Prompts      | 6 prompts | Neovim-specific agent workflows |
+| Resources    | 17 static + 3 templates | Live editor state with auto-subscriptions |
+| Prompts      | 8 prompts | Neovim-specific agent workflows |
 | Completions  | Supported | Autocomplete for resource URIs and prompt args |
 | Logging      | Supported | Editor events broadcast to connected clients |
+| Progress     | Supported | Real-time status during edit review (awaiting, reviewing, editing) |
 | Roots        | Supported | Stores client-declared project roots |
 | Sampling     | Supported | AI completion, explain, fix, refactor, review |
 
@@ -329,7 +346,7 @@ The plugin uses Neovim's built-in libuv bindings (`vim.loop`) to run an HTTP ser
 ## Security
 
 - The server only listens on localhost by default
-- CORS is restricted to localhost origins
+- CORS is restricted to localhost origins (no arbitrary web page access)
 - `lua_exec`, `nvim_exec`, `nvim_eval`, and `run` execute arbitrary code — disable with `allow_code_execution = false`
 - No authentication (any local process can connect) — suitable for single-user development machines
 - Sampling requests only go to already-connected clients (never to external services)
@@ -337,4 +354,3 @@ The plugin uses Neovim's built-in libuv bindings (`vim.loop`) to run an HTTP ser
 ## License
 
 MIT
-
