@@ -83,6 +83,9 @@ function M.setup()
       log("debug", string.format("TextChanged: %s (buf %d)", name ~= "" and name or "[No Name]", ev.buf))
       schedule_notification("nvim://buffer/current")
       schedule_notification("nvim://buffer/" .. ev.buf)
+      if name ~= "" then
+        schedule_notification("file://" .. name)
+      end
     end,
   })
 
@@ -91,6 +94,10 @@ function M.setup()
     callback = function(ev)
       schedule_notification("nvim://buffer/current")
       schedule_notification("nvim://buffer/" .. ev.buf)
+      local name = vim.api.nvim_buf_get_name(ev.buf)
+      if name ~= "" then
+        schedule_notification("file://" .. name)
+      end
     end,
   })
 
@@ -109,6 +116,9 @@ function M.setup()
       local name = vim.api.nvim_buf_get_name(ev.buf)
       log("info", string.format("BufWritePost: saved %s", name))
       sessions.notify_resource_updated("nvim://buffer/" .. ev.buf)
+      if name ~= "" then
+        sessions.notify_resource_updated("file://" .. name)
+      end
     end,
   })
 

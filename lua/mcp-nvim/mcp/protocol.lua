@@ -23,6 +23,47 @@ function M.client_supports(capability)
   return M.client_capabilities[capability] ~= nil
 end
 
+--- Auto-subscribe a session based on read-like tool usage.
+--- Maps tool calls to resource URIs the client implicitly cares about.
+function M._auto_subscribe_tool(session_id, tool_name, arguments)
+  if tool_name == "read_file" then
+    local path = arguments.path
+    if path then
+      -- Resolve to absolute path
+      if not path:match("^/") then
+        path = vim.fn.getcwd() .. "/" .. path
+      end
+      sessions.subscribe(session_id, "file://" .. path)
+    end
+  elseif tool_name == "buffer_get_content" then
+    local bufnr = arguments.buffer
+    if bufnr then
+      sessions.subscribe(session_id, "nvim://buffer/" .. bufnr)
+    end
+    if arguments.file then
+      local path = arguments.file
+      if not path:match("^/") then
+        path = vim.fn.getcwd() .. "/" .. path
+      end
+      sessions.subscribe(session_id, "file://" .. path)
+    end
+  elseif tool_name == "buffer_open" then
+    local path = arguments.file
+    if path then
+      if not path:match("^/") then
+        path = vim.fn.getcwd() .. "/" .. path
+      end
+      sessions.subscribe(session_id, "file://" .. path)
+    end
+  elseif tool_name == "cursor_get" then
+    sessions.subscribe(session_id, "nvim://cursor")
+  elseif tool_name == "diagnostics" then
+    sessions.subscribe(session_id, "nvim://diagnostics")
+  elseif tool_name == "quickfix_get" then
+    sessions.subscribe(session_id, "nvim://quickfix")
+  end
+end
+
 function M.handle_jsonrpc(request_body, tool_registry, session_id, respond_fn)
   local msg = json.decode(request_body)
   if not msg then
@@ -114,6 +155,10 @@ function M.handle_jsonrpc(request_body, tool_registry, session_id, respond_fn)
         end
         response_body = M.success_response(id, call_result)
       end
+      -- Auto-subscribe after successful read-like tool calls
+      if ok and session_id then
+        M._auto_subscribe_tool(session_id, tool_name, arguments)
+      end
       if respond_fn then
         respond_fn(response_body)
       end
@@ -142,6 +187,10 @@ function M.handle_jsonrpc(request_body, tool_registry, session_id, respond_fn)
     local ok, contents = resource_registry.read(uri)
     if not ok then
       return M.error_response(id, -32002, contents)
+    end
+    -- Auto-subscribe: reading a resource implies interest in updates
+    if session_id then
+      sessions.subscribe(session_id, uri)
     end
     return M.success_response(id, { contents = contents })
   end
